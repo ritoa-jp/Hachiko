@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hachiko ローカルAPI仕様書</title>
+  <style>
+    :root {
+      --bg: #f6f1e7;
+      --panel: rgba(255, 251, 245, 0.96);
+      --ink: #1f2a2b;
+      --muted: #586566;
+      --line: rgba(31, 42, 43, 0.12);
+      --accent: #0f7b6c;
+      --accent-2: #d96f32;
+      --code-bg: #182022;
+      --code-ink: #edf4f4;
+      --shadow: 0 20px 40px rgba(31, 42, 43, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Yu Gothic UI", "Hiragino Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 123, 108, 0.14), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(217, 111, 50, 0.12), transparent 28%),
+        linear-gradient(135deg, #efe7d6, var(--bg));
+    }
+
+    main {
+      width: min(1080px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 32px 0 48px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.02;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 820px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .doc-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .meta-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .notice {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      grid-column: span 12;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .card.half {
+      grid-column: span 6;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    p,
+    li {
+      line-height: 1.75;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(15, 123, 108, 0.1);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .endpoint {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .endpoint + .endpoint {
+      margin-top: 14px;
+    }
+
+    .endpoint-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .method {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(217, 111, 50, 0.12);
+      color: var(--accent-2);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .path {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 16px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      line-height: 1.7;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        width: min(100vw - 20px, 1080px);
+        padding-top: 20px;
+      }
+
+      .card.half {
+        grid-column: span 12;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Hachiko Local API</div>
+      <h1>Hachiko ローカルAPI仕様書</h1>
+      <p class="lead">
+        このページは、Hachiko のローカル HTTP API を使って通知送信や状態確認をしたいユーザー向けの仕様書です。
+        PowerShell、バッチ、別アプリ、常駐ツールなどから Hachiko を呼び出すときの基本形をまとめています。
+      </p>
+      <p class="lead">関連資料: <a class="doc-link" href="./update-guide.html">更新案内仕様</a></p>
+      <div class="meta-list">
+        <div>対応バージョン: Hachiko v1.x</div>
+        <div>Document version: 2026-06-17</div>
+      </div>
+    </section>
+
+    <div class="notice">
+      Web UI とローカル API は同じ Service、同じポートで動きます。
+      既定ポートは <code>8080</code> ですが、Tray の
+      <code>Change port and restart</code> で変更している場合は、そのポート番号を使ってください。
+      たとえば Web UI を <code>http://127.0.0.1:8081/</code> で開いているなら、
+      API のベース URL も <code>http://127.0.0.1:8081</code> です。
+    </div>
+
+    <section class="grid">
+      <article class="card half">
+        <h2>Quick Start</h2>
+        <h3>まずは疎通確認</h3>
+        <p>最初に <code>GET /health</code> を呼ぶと、Hachiko Service が起動しているか確認できます。</p>
+        <pre>Invoke-RestMethod http://127.0.0.1:8080/health</pre>
+      </article>
+
+      <article class="card half">
+        <h2>Supported Targets</h2>
+        <h3>通知先</h3>
+        <p>無料本体で使える通知先は次の 4 つです。<code>channel</code> にはこの値を使います。</p>
+        <div class="pill-row">
+          <span class="pill">discord</span>
+          <span class="pill">slack</span>
+          <span class="pill">telegram</span>
+          <span class="pill">teams</span>
+        </div>
+      </article>
+
+      <article class="card half">
+        <h2>Security</h2>
+        <h3>セキュリティ上の注意</h3>
+        <ul>
+          <li>ローカル API は、原則として <code>127.0.0.1</code> からの利用を想定しています。</li>
+          <li>LAN やインターネットへ公開しないでください。</li>
+          <li>ポートを外部公開すると、第三者に通知送信や設定変更を実行される可能性があります。</li>
+          <li><code>bind_address</code> を変更する場合は、その影響を理解したうえで使用してください。</li>
+        </ul>
+      </article>
+
+      <article class="card half">
+        <h2>Authentication</h2>
+        <h3>API の認証について</h3>
+        <p>
+          現在の無料本体のローカル API には、API キー、Bearer Token、Basic 認証などの
+          HTTP 認証機構はありません。
+        </p>
+        <p>
+          そのため、安全性は主に <code>127.0.0.1</code> バインドと、
+          外部公開しない運用に依存します。
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Notify</h2>
+        <h3>通知送信: <code>POST /notify</code></h3>
+        <p>
+          Hachiko に通知を依頼するための基本 API です。
+          通知はキューに入ってから送信されるため、レスポンスが返った時点では「受付完了」です。
+        </p>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">POST</span>
+            <span class="path">/notify</span>
+          </div>
+          <p class="muted">JSON を送信します。<code>title</code> と <code>body</code> は必須です。</p>
+          <table>
+            <thead>
+              <tr>
+                <th>フィールド</th>
+                <th>型</th>
+                <th>必須</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>title</code></td>
+                <td>string</td>
+                <td>はい</td>
+                <td>通知タイトルです。</td>
+              </tr>
+              <tr>
+                <td><code>body</code></td>
+                <td>string</td>
+                <td>はい</td>
+                <td>通知本文です。</td>
+              </tr>
+              <tr>
+                <td><code>channel</code></td>
+                <td>string</td>
+                <td>いいえ</td>
+                <td>指定すると、その通知先 1 つだけへ送ります。省略すると、有効化されているすべての通知先へ個別にキュー投入します。</td>
+              </tr>
+              <tr>
+                <td><code>metadata</code></td>
+                <td>object</td>
+                <td>いいえ</td>
+                <td>補助情報です。文字列キーと文字列値の組だけを入れてください。</td>
+              </tr>
+            </tbody>
+          </table>
+          <pre>Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8080/notify -ContentType application/json -Body '{"title":"Build finished","body":"The first Hachiko notification arrived.","channel":"discord"}'</pre>
+          <pre>Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8080/notify -ContentType application/json -Body '{"title":"Nightly build","body":"Send to every enabled target"}'</pre>
+          <pre>{
+  "id": "2f8f6cf4-1f9e-49da-bf1a-0b61bc53e7df",
+  "accepted": true,
+  "notification_ids": [
+    "2f8f6cf4-1f9e-49da-bf1a-0b61bc53e7df"
+  ],
+  "accepted_count": 1
+}</pre>
+          <p class="footer-note">
+            <code>POST /notify</code> のレスポンスは「受付できたか」を返します。
+            <code>channel</code> を省略した場合は、<code>notification_ids</code> と <code>accepted_count</code> が複数件になることがあります。
+            実際の送信失敗や再試行は、あとから <code>/history</code> と
+            <code>/history/summary</code> で確認してください。
+          </p>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Status</h2>
+        <h3>状態確認 API</h3>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">GET</span>
+            <span class="path">/health</span>
+          </div>
+          <p>Service が応答しているかだけを軽く確認したいときに使います。</p>
+          <pre>{
+  "status": "ok",
+  "queued_count": 0
+}</pre>
+        </div>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">GET</span>
+            <span class="path">/status</span>
+          </div>
+          <p>現在の設定も含めた状態を取得します。Web UI の表示元の 1 つです。</p>
+        </div>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">GET</span>
+            <span class="path">/dashboard</span>
+          </div>
+          <p><code>/status</code> と <code>/history/summary</code> をまとめた画面向け API です。</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Test Notify</h2>
+        <h3>接続テストとテスト送信: <code>POST /notify/test</code></h3>
+        <p>
+          この API は、Web UI の接続確認とテスト送信用です。
+          通常の外部連携よりも、設定確認や初期セットアップ時の動作確認に向いています。
+        </p>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">POST</span>
+            <span class="path">/notify/test</span>
+          </div>
+          <p class="muted">
+            <code>channel</code> は必須です。
+            <code>mode</code> に <code>connection</code> を指定するとその場で接続確認、
+            <code>queue</code> を指定すると通常の通知キューへ積んで確認します。
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>フィールド</th>
+                <th>型</th>
+                <th>必須</th>
+                <th>説明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>channel</code></td>
+                <td>string</td>
+                <td>はい</td>
+                <td>確認対象の通知先です。<code>discord</code>、<code>slack</code>、<code>telegram</code>、<code>teams</code> のいずれかを指定します。</td>
+              </tr>
+              <tr>
+                <td><code>title</code></td>
+                <td>string</td>
+                <td>いいえ</td>
+                <td>テスト通知タイトルです。省略時は既定値が使われます。</td>
+              </tr>
+              <tr>
+                <td><code>body</code></td>
+                <td>string</td>
+                <td>いいえ</td>
+                <td>テスト通知本文です。省略時は既定値が使われます。</td>
+              </tr>
+              <tr>
+                <td><code>mode</code></td>
+                <td>string</td>
+                <td>いいえ</td>
+                <td><code>connection</code> または <code>queue</code> を指定します。省略時は接続確認として扱います。</td>
+              </tr>
+            </tbody>
+          </table>
+          <pre>Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8080/notify/test -ContentType application/json -Body '{"channel":"discord","mode":"connection"}'</pre>
+          <pre>{
+  "ok": true,
+  "mode": "connection",
+  "queued": false,
+  "notification_id": null,
+  "message": "接続テストに成功しました",
+  "error_code": null,
+  "error_message": null
+}</pre>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>History</h2>
+        <h3>履歴 API</h3>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">GET</span>
+            <span class="path">/history</span>
+          </div>
+          <p>通知履歴の一覧です。各レコードには受付時刻、処理時刻、失敗コードが入ります。</p>
+          <pre>[
+  {
+    "id": "bb3c8cf4-371b-4f26-98fd-db7344409588",
+    "request": {
+      "title": "Hachiko test (discord)",
+      "body": "Web UI からのテスト送信です",
+      "channel": "discord",
+      "metadata": {}
+    },
+    "status": "queued",
+    "received_at": "2026-06-16T11:14:11.2956178Z",
+    "processed_at": null,
+    "error_code": null,
+    "error_message": null
+  }
+]</pre>
+          <p class="footer-note">
+            <code>status</code> には次の値が入ります:
+            <code>queued</code>,
+            <code>retry_waiting</code>,
+            <code>sent</code>,
+            <code>failed</code>
+          </p>
+        </div>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">GET</span>
+            <span class="path">/history/summary</span>
+          </div>
+          <p>最近の総件数、成功件数、再試行待ち件数、失敗件数と、最後の時刻情報を返します。</p>
+          <pre>{
+  "recent_total": 1,
+  "recent_success_count": 0,
+  "recent_retry_waiting_count": 1,
+  "recent_failed_count": 0,
+  "last_received_at": "2026-06-16T11:14:11.2956178Z",
+  "last_sent_at": null,
+  "last_failure_at": null
+}</pre>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Settings</h2>
+        <h3>設定取得と部分更新</h3>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">GET</span>
+            <span class="path">/settings</span>
+          </div>
+          <p>現在の設定内容をそのまま JSON で返します。</p>
+        </div>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">POST</span>
+            <span class="path">/settings/update</span>
+          </div>
+          <p>
+            設定の一部だけを更新します。送った項目だけが反映されます。
+            この API で変えられるのは <code>logging</code>、<code>file_watch</code>、<code>notification_targets</code> です。
+            ポート変更はこの API ではなく、Tray の <code>Change port and restart</code> から行います。
+          </p>
+          <pre>{
+  "notification_targets": {
+    "discord": {
+      "enabled": true,
+      "settings": {
+        "webhook_url": "https://discord.com/api/webhooks/..."
+      }
+    }
+  }
+}</pre>
+          <pre>{
+  "updated": true,
+  "reloaded_sections": [
+    "notification_targets"
+  ],
+  "validation_errors": []
+}</pre>
+          <pre>{
+  "logging": {
+    "enabled": true,
+    "retention_days": 30
+  },
+  "file_watch": {
+    "enabled": true,
+    "watch_roots": [
+      "C:\\watch"
+    ],
+    "recursive": true,
+    "notify_on_created": true,
+    "notify_on_deleted": true,
+    "notify_on_size_changed": true,
+    "notify_on_modified_time_changed": true,
+    "notify_on_extension_changed": true
+  }
+}</pre>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Error Responses</h2>
+        <h3>失敗レスポンス例</h3>
+        <p>
+          Hachiko のローカル API では、エンドポイントごとに失敗時の返し方が少し異なります。
+          特に <code>/settings/update</code> は構造化されたバリデーションエラーを返します。
+        </p>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">POST</span>
+            <span class="path">/settings/update</span>
+          </div>
+          <p>存在しないフォルダを監視対象にした場合の例です。</p>
+          <pre>{
+  "updated": false,
+  "reloaded_sections": [],
+  "validation_errors": [
+    {
+      "category": "file_watch",
+      "field": "watch_roots",
+      "code": "path_not_found",
+      "message": "file_watch.watch_roots path was not found: C:\\not-found"
+    }
+  ]
+}</pre>
+        </div>
+        <div class="endpoint">
+          <div class="endpoint-head">
+            <span class="method">POST</span>
+            <span class="path">/notify/test</span>
+          </div>
+          <p>接続テストで通知先が無効な場合の例です。</p>
+          <pre>{
+  "ok": false,
+  "mode": "connection",
+  "queued": false,
+  "notification_id": null,
+  "message": "接続テストに失敗しました",
+  "error_code": "target_disabled",
+  "error_message": "discord target is disabled"
+}</pre>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Webhook Setup</h2>
+        <h3>通知先設定の要点</h3>
+        <ul>
+          <li>Discord: <code>notification_targets.discord.settings.webhook_url</code> に Webhook URL を入れます。</li>
+          <li>Slack: <code>notification_targets.slack.settings.webhook_url</code> に Incoming Webhook URL を入れます。</li>
+          <li>Telegram: <code>bot_token</code> と <code>chat_id</code> を入れます。</li>
+          <li>Microsoft Teams: <code>notification_targets.teams.settings.webhook_url</code> に Workflows の Webhook URL を入れます。</li>
+        </ul>
+        <p class="footer-note">
+          有効化だけして必須項目が足りない場合、<code>/settings/update</code> は
+          <code>validation_errors</code> を返します。
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Notes</h2>
+        <h3>補足</h3>
+        <ul>
+          <li>通知はまずキューへ入り、送信結果は <code>/history</code> に残ります。</li>
+          <li>送信失敗時は最大 3 回まで再試行します。</li>
+          <li>失敗内容は <code>error_code</code> と <code>error_message</code> で確認できます。</li>
+          <li>ファイル監視通知も、内部的には同じ通知キューと履歴を使います。</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
