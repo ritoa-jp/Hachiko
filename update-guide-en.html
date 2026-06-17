@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hachiko Update Guide</title>
+  <style>
+    :root {
+      --bg: #f6f1e7;
+      --panel: rgba(255, 251, 245, 0.96);
+      --ink: #1f2a2b;
+      --muted: #586566;
+      --line: rgba(31, 42, 43, 0.12);
+      --accent: #0f7b6c;
+      --shadow: 0 20px 40px rgba(31, 42, 43, 0.08);
+      --code-bg: #182022;
+      --code-ink: #edf4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 123, 108, 0.14), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(217, 111, 50, 0.12), transparent 28%),
+        linear-gradient(135deg, #efe7d6, var(--bg));
+    }
+
+    main {
+      width: min(1080px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .back-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(255, 251, 245, 0.85);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .lang-link,
+    .lang-current {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .lang-link {
+      color: var(--muted);
+    }
+
+    .lang-current {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.02;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 860px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .doc-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .notice {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      grid-column: span 12;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .card.half {
+      grid-column: span 6;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    p,
+    li {
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 14px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      line-height: 1.7;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        width: min(100vw - 20px, 1080px);
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .card.half {
+        grid-column: span 12;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topbar">
+      <a class="back-link" href="./en.html">Back to Home</a>
+      <div class="lang-switch">
+        <a class="lang-link" href="./update-guide.html" hreflang="ja" lang="ja">日本語</a>
+        <span class="lang-current">English</span>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Hachiko Update Guide</div>
+      <h1>Hachiko Update Guide</h1>
+      <p class="lead">
+        Hachiko checks a public <code>latest.json</code> file to determine whether a newer version is available.
+        The update dialog is designed to tell the user that a new version exists and open the official website.
+      </p>
+      <p class="lead">
+        Related document:
+        <a class="doc-link" href="./local-api-guide.html">Local API Guide</a>
+        <span> (currently available in Japanese)</span>
+      </p>
+    </section>
+
+    <div class="notice">
+      Hachiko uses a Windows Service, so it currently ships as a Win32 installer rather than a Store app.
+      The update flow points users to the official website and installer download path.
+    </div>
+
+    <section class="grid">
+      <article class="card half">
+        <h2>Goal</h2>
+        <h3>What this is for</h3>
+        <ul>
+          <li>Tell the user that a newer version is available</li>
+          <li>Guide the user to the official website</li>
+          <li>Keep update notice separate from the actual update process</li>
+        </ul>
+      </article>
+
+      <article class="card half">
+        <h2>Non Goal</h2>
+        <h3>What this does not do</h3>
+        <ul>
+          <li>Perform automatic in-app updates</li>
+          <li>Integrate with purchases or add-ons</li>
+          <li>Stop the Service when the notice appears</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Manifest</h2>
+        <h3>The public file is <code>latest.json</code></h3>
+        <p>
+          Hachiko reads a public update manifest JSON file.
+          The current public URL is <code>https://hachiko.ritoa.jp/latest.json</code>.
+        </p>
+        <pre>{
+  "latest_version": "0.1.1",
+  "published_at": "2026-06-17T10:50:00Z",
+  "message": "Hachiko 0.1.1 is now available.",
+  "release_notes_url": "update-guide.html",
+  "store_product_url": "",
+  "store_product_id": ""
+}</pre>
+      </article>
+
+      <article class="card">
+        <h2>Fields</h2>
+        <h3>Manifest fields</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Required</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>latest_version</code></td>
+              <td>Yes</td>
+              <td>The newest version number.</td>
+            </tr>
+            <tr>
+              <td><code>published_at</code></td>
+              <td>Yes</td>
+              <td>The publish timestamp.</td>
+            </tr>
+            <tr>
+              <td><code>message</code></td>
+              <td>Yes</td>
+              <td>A short message shown in the update dialog.</td>
+            </tr>
+            <tr>
+              <td><code>release_notes_url</code></td>
+              <td>Yes</td>
+              <td>The normal destination. Relative paths and absolute URLs are both supported.</td>
+            </tr>
+            <tr>
+              <td><code>store_product_url</code></td>
+              <td>No</td>
+              <td>A reserved fallback field for possible future use.</td>
+            </tr>
+            <tr>
+              <td><code>store_product_id</code></td>
+              <td>No</td>
+              <td>A reserved fallback field for possible future use.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h2>Behavior</h2>
+        <h3>Resolution order</h3>
+        <ol>
+          <li>Open <code>store_product_url</code> if present</li>
+          <li>Use <code>store_product_id</code> as a fallback helper link if present</li>
+          <li>Otherwise open <code>release_notes_url</code></li>
+        </ol>
+        <p>
+          In the current Hachiko setup, step 3 is normally used and points users to
+          <code>https://hachiko.ritoa.jp/</code>.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Dialog</h2>
+        <h3>User-facing message</h3>
+        <p>
+          The update dialog is treated as a website entry point rather than the updater itself.
+        </p>
+        <pre>A new version is available. Open the official page?</pre>
+      </article>
+
+      <article class="card">
+        <h2>Settings</h2>
+        <h3>App-side settings</h3>
+        <ul>
+          <li><code>update.enabled</code></li>
+          <li><code>update.manifest_url</code></li>
+          <li><code>update.check_on_start</code></li>
+        </ul>
+        <p>
+          The current default manifest URL is <code>https://hachiko.ritoa.jp/latest.json</code>.
+        </p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
