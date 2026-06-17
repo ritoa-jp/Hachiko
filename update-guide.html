@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hachiko 更新案内仕様</title>
+  <style>
+    :root {
+      --bg: #f6f1e7;
+      --panel: rgba(255, 251, 245, 0.96);
+      --ink: #1f2a2b;
+      --muted: #586566;
+      --line: rgba(31, 42, 43, 0.12);
+      --accent: #0f7b6c;
+      --shadow: 0 20px 40px rgba(31, 42, 43, 0.08);
+      --code-bg: #182022;
+      --code-ink: #edf4f4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Yu Gothic UI", "Hiragino Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 123, 108, 0.14), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(217, 111, 50, 0.12), transparent 28%),
+        linear-gradient(135deg, #efe7d6, var(--bg));
+    }
+
+    main {
+      width: min(1080px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .back-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(255, 251, 245, 0.85);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .lang-link,
+    .lang-current {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .lang-link {
+      color: var(--muted);
+    }
+
+    .lang-current {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.02;
+    }
+
+    .lead {
+      margin: 0;
+      max-width: 860px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .doc-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .notice {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      grid-column: span 12;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .card.half {
+      grid-column: span 6;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    p,
+    li {
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 14px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      line-height: 1.7;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        width: min(100vw - 20px, 1080px);
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .card.half {
+        grid-column: span 12;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topbar">
+      <a class="back-link" href="./index.html">公式トップへ戻る</a>
+      <div class="lang-switch">
+        <span class="lang-current">日本語</span>
+        <a class="lang-link" href="./update-guide-en.html" hreflang="en" lang="en">English</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="eyebrow">Hachiko Update Guide</div>
+      <h1>Hachiko 更新案内仕様</h1>
+      <p class="lead">
+        Hachiko の更新確認は、公開サイト上の <code>latest.json</code> を参照して新しい版の有無を判定します。
+        更新ダイアログは「新しい版があることを知らせる」「公式ページを開く」ことを主目的にしています。
+      </p>
+      <p class="lead">
+        関連ドキュメント:
+        <a class="doc-link" href="./local-api-guide.html">ローカルAPI仕様</a>
+      </p>
+    </section>
+
+    <div class="notice">
+      Hachiko は Windows Service を使うため、Store ではなく Win32 installer を前提にしています。
+      更新確認も Store 遷移ではなく、公式ページと installer 配布URL を使う形で運用します。
+    </div>
+
+    <section class="grid">
+      <article class="card half">
+        <h2>Goal</h2>
+        <h3>目的</h3>
+        <ul>
+          <li>新しいバージョンの存在を知らせる</li>
+          <li>利用者を公式ページへ案内する</li>
+          <li>Service 停止を伴う更新処理とは分離する</li>
+        </ul>
+      </article>
+
+      <article class="card half">
+        <h2>Non Goal</h2>
+        <h3>この機能がしないこと</h3>
+        <ul>
+          <li>アプリ内での自動更新そのもの</li>
+          <li>購入やアドオン機能との連動</li>
+          <li>通知を出した時点での Service 自動停止</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Manifest</h2>
+        <h3>公開側は <code>latest.json</code> を更新する</h3>
+        <p>
+          Hachiko は公開サイト上の update manifest JSON を読みます。
+          現在の公開URLは <code>https://hachiko.ritoa.jp/latest.json</code> です。
+        </p>
+        <pre>{
+  "latest_version": "0.1.1",
+  "published_at": "2026-06-17T10:50:00Z",
+  "message": "Hachiko 0.1.1 を公開しました。",
+  "release_notes_url": "update-guide.html",
+  "store_product_url": "",
+  "store_product_id": ""
+}</pre>
+      </article>
+
+      <article class="card">
+        <h2>Fields</h2>
+        <h3>manifest の項目</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>必須</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>latest_version</code></td>
+              <td>はい</td>
+              <td>最新バージョン番号です。</td>
+            </tr>
+            <tr>
+              <td><code>published_at</code></td>
+              <td>はい</td>
+              <td>公開日時です。</td>
+            </tr>
+            <tr>
+              <td><code>message</code></td>
+              <td>はい</td>
+              <td>更新ダイアログに表示する短い案内文です。</td>
+            </tr>
+            <tr>
+              <td><code>release_notes_url</code></td>
+              <td>はい</td>
+              <td>通常の誘導先です。相対パスでも絶対URLでも使えます。</td>
+            </tr>
+            <tr>
+              <td><code>store_product_url</code></td>
+              <td>いいえ</td>
+              <td>将来用の予備項目です。現行運用では空でかまいません。</td>
+            </tr>
+            <tr>
+              <td><code>store_product_id</code></td>
+              <td>いいえ</td>
+              <td>将来用の予備項目です。現行運用では空でかまいません。</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="card">
+        <h2>Behavior</h2>
+        <h3>更新案内の解決順</h3>
+        <ol>
+          <li><code>store_product_url</code> があればそれを開く</li>
+          <li><code>store_product_id</code> があれば補助リンクとして使う</li>
+          <li>どちらもなければ <code>release_notes_url</code> を開く</li>
+        </ol>
+        <p>
+          現在の Hachiko では通常 3 番目が使われ、公式トップ
+          <code>https://hachiko.ritoa.jp/</code> を開く運用です。
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Dialog</h2>
+        <h3>ユーザーに見せる案内</h3>
+        <p>
+          更新確認ダイアログは、更新作業そのものではなく公開ページへの導線として扱います。
+        </p>
+        <pre>新しいバージョンがあります。公開ページを開きますか？</pre>
+      </article>
+
+      <article class="card">
+        <h2>Settings</h2>
+        <h3>アプリ側の設定値</h3>
+        <ul>
+          <li><code>update.enabled</code></li>
+          <li><code>update.manifest_url</code></li>
+          <li><code>update.check_on_start</code></li>
+        </ul>
+        <p>
+          現在の既定値は <code>https://hachiko.ritoa.jp/latest.json</code> です。
+        </p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
