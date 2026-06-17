@@ -1,0 +1,49 @@
+name: Track Downloads
+
+on:
+  schedule:
+    # Runs at 23:55 JST which is 14:55 UTC
+    - cron: '55 14 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  track-downloads:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch download count and update CSV
+        run: |
+          TOTAL=$(curl -s https://api.github.com/repos/ritoa-jp/Hachiko/releases | jq '[.[].assets[].download_count] | add')
+          if [ "$TOTAL" = "null" ]; then TOTAL=0; fi
+
+          DATE=$(TZ=Asia/Tokyo date +'%Y-%m-%d')
+          FILE="downloads.csv"
+
+          if [ ! -f "$FILE" ]; then
+            echo "Date,TotalDownloads,DailyIncrease" > "$FILE"
+            PREV_TOTAL=0
+          else
+            PREV_TOTAL=$(tail -n 1 "$FILE" | cut -d',' -f2)
+            if [ "$PREV_TOTAL" = "TotalDownloads" ]; then PREV_TOTAL=0; fi
+          fi
+
+          INCREASE=$((TOTAL - PREV_TOTAL))
+
+          echo "$DATE,$TOTAL,$INCREASE" >> "$FILE"
+
+      - name: Commit and Push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add downloads.csv
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Update download stats for $(TZ=Asia/Tokyo date +'%Y-%m-%d')"
+            git push
+          else
+            echo "No changes to commit"
+          fi
