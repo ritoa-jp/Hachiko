@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hachiko</title>
+  <style>
+    :root {
+      --bg: #f6f1e7;
+      --panel: rgba(255, 251, 245, 0.96);
+      --ink: #1f2a2b;
+      --muted: #586566;
+      --line: rgba(31, 42, 43, 0.12);
+      --accent: #0f7b6c;
+      --shadow: 0 24px 48px rgba(31, 42, 43, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 123, 108, 0.16), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(217, 111, 50, 0.14), transparent 26%),
+        linear-gradient(135deg, #efe7d6, var(--bg));
+    }
+
+    main {
+      width: min(1120px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 12px;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      background: rgba(255, 251, 245, 0.85);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .lang-link,
+    .lang-current {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      min-height: 34px;
+      padding: 0 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .lang-link {
+      color: var(--muted);
+    }
+
+    .lang-current {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 20px;
+    }
+
+    .hero-copy,
+    .hero-panel,
+    .section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      padding: 28px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 64px);
+      line-height: 0.98;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 4px;
+    }
+
+    .button,
+    .button-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .button {
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), #0b5f54);
+    }
+
+    .button-secondary {
+      color: var(--ink);
+      background: rgba(15, 123, 108, 0.08);
+      border: 1px solid rgba(15, 123, 108, 0.18);
+    }
+
+    .button:hover,
+    .button-secondary:hover,
+    .lang-link:hover {
+      transform: translateY(-1px);
+      opacity: 0.94;
+    }
+
+    .hero-panel {
+      padding: 22px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .version {
+      display: grid;
+      gap: 2px;
+    }
+
+    .version-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-weight: 700;
+    }
+
+    .version-value {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .meta {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .notice {
+      padding: 14px 16px;
+      border-radius: 8px;
+      background: rgba(217, 111, 50, 0.1);
+      color: #73431f;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+    }
+
+    .section {
+      padding: 22px;
+    }
+
+    .section.wide {
+      grid-column: span 7;
+    }
+
+    .section.narrow {
+      grid-column: span 5;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    p,
+    li {
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .link-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .link-card {
+      display: block;
+      padding: 14px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      color: inherit;
+      background: rgba(255, 255, 255, 0.55);
+    }
+
+    .link-card strong {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .link-card span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    code {
+      font-family: "Consolas", "Menlo", monospace;
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .section.wide,
+      .section.narrow {
+        grid-column: 1 / -1;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="topbar">
+      <div class="lang-switch">
+        <a class="lang-link" href="./index.html" hreflang="ja" lang="ja">日本語</a>
+        <span class="lang-current">English</span>
+      </div>
+    </div>
+
+    <section class="hero">
+      <article class="hero-copy">
+        <div class="eyebrow">Official Page</div>
+        <h1>Hachiko</h1>
+        <p class="lead">
+          Hachiko is a Windows notification hub. It can send alerts to Discord, Slack,
+          Telegram, and Microsoft Teams through a local API and file watching.
+        </p>
+        <p class="lead">
+          Even if GitHub Releases is used as the storage location for binaries,
+          this page is intended to be the main public entry point for users.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="https://github.com/ritoa-jp/Hachiko/releases/download/v0.1.1/HachikoSetup-0.1.1.exe">Download for Windows</a>
+          <a class="button-secondary" href="https://github.com/ritoa-jp/Hachiko">View on GitHub</a>
+          <a class="button-secondary" href="./update-guide-en.html">Read Update Notes</a>
+        </div>
+      </article>
+
+      <aside class="hero-panel">
+        <div class="version">
+          <div class="version-label">Current Version</div>
+          <div class="version-value">0.1.1</div>
+        </div>
+        <div class="meta">
+          <div>Supported OS: Windows 10 / 11</div>
+          <div>Distribution: Win32 installer <code>HachikoSetup-0.1.1.exe</code></div>
+          <div>Channels: Discord / Slack / Telegram / Microsoft Teams</div>
+        </div>
+        <div class="notice">
+          The download button points directly to the installer file.
+          Use "View on GitHub" if you want to browse the repository or release page.
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <article class="section wide">
+        <h2>Distribution</h2>
+        <p>
+          Hachiko uses a Windows Service, so it currently ships as a Win32 installer rather than a Store app.
+          The in-app update flow opens this official page so release notes and download guidance stay in one place.
+        </p>
+        <p>
+          GitHub Releases can remain the backend storage for binaries while this HTML page stays the user-facing homepage.
+        </p>
+      </article>
+
+      <article class="section narrow">
+        <h2>Documents</h2>
+        <div class="link-list">
+          <a class="link-card" href="./update-guide.html">
+            <strong>Update Guide</strong>
+            <span>How <code>latest.json</code> and update checks work</span>
+          </a>
+          <a class="link-card" href="./local-api-guide.html">
+            <strong>Local API Guide</strong>
+            <span>Notification sending, history, and settings API. The document itself is currently in Japanese.</span>
+          </a>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
